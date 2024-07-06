@@ -1,20 +1,37 @@
 package com.example.feedforward_courier.ui.dashboard;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class DashboardViewModel extends ViewModel {
+import com.example.feedforward_courier.interfacea.ApiCallback;
+import com.example.feedforward_courier.models.Order;
+import com.example.feedforward_courier.models.server.object.ObjectBoundary;
+import com.example.feedforward_courier.models.server.user.UserSession;
+import com.example.feedforward_courier.utils.Repository;
 
-    private final MutableLiveData<String> mText;
+import java.util.List;
+
+public class DashboardViewModel extends ViewModel {
+    Repository repository;
 
     public DashboardViewModel() {
-        mText = new MutableLiveData<>();
-        mText.setValue("This is dashboard fragment");
+        repository = Repository.getInstance();
+    }
+    public void getOrders(ApiCallback<List<Order>> callback){
+        repository.getAllOrders(UserSession.getInstance().getSUPERAPP(), UserSession.getInstance().getUserEmail(), 50, 0, new ApiCallback<List<ObjectBoundary>>() {
+            @Override
+            public void onSuccess(List<ObjectBoundary> result) {
+                List<Order> orders = Order.convertObjectBoundaryList(result);
+                callback.onSuccess(orders);
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        });
+
     }
 
-    public LiveData<String> getText() {
-        return mText;
-    }
+
 
 }

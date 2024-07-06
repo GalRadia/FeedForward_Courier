@@ -83,6 +83,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             holder.startButton.setOnClickListener(v -> {
                 if (orderCallback != null) {
                     orderCallback.onStartOrder(order);
+                    notifyDataSetChanged();
                 }
             });
         }

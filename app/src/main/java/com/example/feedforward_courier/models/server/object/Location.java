@@ -4,32 +4,32 @@ package com.example.feedforward_courier.models.server.object;
 
 public class Location {
 
-    private double latitude;
-    private double longitude;
+    private double lat;
+    private double lng;
 
     public Location() {
     }
 
-    public Location(Double latitude, Double longitude) {
+    public Location(Double lat, Double lng) {
         super();
-        this.latitude = latitude;
-        this.longitude = longitude;
+        this.lat = lat;
+        this.lng = lng;
     }
-    public Double getLatitude() {
-        return latitude;
+    public Double getLat() {
+        return lat;
     }
-    public void setLatitude(Double latitude) {
-        this.latitude = latitude;
+    public void setLat(Double lat) {
+        this.lat = lat;
     }
-    public Double getLongitude() {
-        return longitude;
+    public Double getLng() {
+        return lng;
     }
-    public void setLongitude(Double longitude) {
-        this.longitude = longitude;
+    public void setLng(Double lng) {
+        this.lng = lng;
     }
     @Override
     public String toString() {
-        return "Location [latitude=" + latitude + ", longitude=" + longitude + "]";
+        return "Location [latitude=" + lat + ", longitude=" + lng + "]";
     }
 
 }

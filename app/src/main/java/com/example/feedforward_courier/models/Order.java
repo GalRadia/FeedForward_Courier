@@ -54,6 +54,9 @@ public class Order {
         this.orderTime = temp.getOrderTime();
         this.foods = temp.getFoods();
         this.orderStatus = temp.getOrderStatus();
+        this.whoCarries = temp.getWhoCarries();
+        this.associationName = temp.getAssociationName();
+        this.associationLocation = temp.getAssociationLocation();
     }
 
     public ObjectId getOrderID() {
@@ -178,7 +181,7 @@ public class Order {
         objectBoundary.setType("Order");
         objectBoundary.setAlias(order.getDonatorEmail());
         objectBoundary.setCreatedBy(new CreatedBy(UserSession.getInstance().getSUPERAPP(), UserSession.getInstance().getUserEmail()));
-        objectBoundary.setLocation(new Location(100.0, 100.0));//TODO: get location from device
+        objectBoundary.setLocation(new Location(order.donatorLocation.getLat(), order.donatorLocation.getLng()));//TODO: get location from device
         objectBoundary.setActive(true);
         Gson gson = new Gson();
         Map<String, Object> orderMap = Map.of("Order",gson.toJson(order, Order.class));

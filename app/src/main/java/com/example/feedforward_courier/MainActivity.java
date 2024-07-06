@@ -23,7 +23,6 @@ import com.example.feedforward_courier.databinding.ActivityMainBinding;
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
-    private static final int REQUEST_LOCATION_PERMISSION = 1;
 
 
     @Override

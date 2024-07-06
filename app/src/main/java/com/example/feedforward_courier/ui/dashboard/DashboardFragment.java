@@ -6,39 +6,45 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.feedforward_courier.adapters.ActiveOrdersAdapter;
 import com.example.feedforward_courier.databinding.FragmentDashboardBinding;
-import com.example.feedforward_courier.databinding.OrderShippingItemBinding;
+import com.example.feedforward_courier.interfacea.ApiCallback;
 import com.example.feedforward_courier.models.Order;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
-import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executor;
 
 public class DashboardFragment extends Fragment {
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+
     private FusedLocationProviderClient fusedLocationClient;
     private RecyclerView recyclerView;
     private DashboardViewModel dashboardViewModel;
     private Location currentLocation = null;
     private ActiveOrdersAdapter adapter;
 
-
     private FragmentDashboardBinding binding;
+
+    private ActivityResultLauncher<String[]> locationPermissionLauncher;
+    private Order orderToLaunch; // Temporary storage to hold order until location is fetched
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -50,15 +56,43 @@ public class DashboardFragment extends Fragment {
         findViews();
         initViews();
 
+        // Initialize the ActivityResultLauncher for requesting permissions
+        locationPermissionLauncher = registerForActivityResult(
+                new ActivityResultContracts.RequestMultiplePermissions(),
+                result -> {
+                    Boolean fineLocationGranted = result.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false);
+                    Boolean coarseLocationGranted = result.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false);
+
+                    if ((fineLocationGranted != null && fineLocationGranted) || (coarseLocationGranted != null && coarseLocationGranted)) {
+                        // Permissions granted, proceed with the task
+                        if (orderToLaunch != null) {
+                            getLastLocationAndLaunchGoogleMaps(orderToLaunch);
+                        }
+                    } else {
+                        // Permission denied, handle accordingly
+                    }
+                });
 
         return root;
     }
 
     private void initViews() {
         adapter = new ActiveOrdersAdapter(getContext(), new ArrayList<>());
+        adapter.setActiveOrderCallback(this::checkLocationPermissionAndLaunchGoogleMaps);
         recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        dashboardViewModel.getOrders(new ApiCallback<List<Order>>() {
+            @Override
+            public void onSuccess(List<Order> result) {
+                adapter.setOrders(result);
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        });
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
-        adapter.setActiveOrderCallback(order -> launchGoogleMapsIntent(order));
     }
 
     private void findViews() {
@@ -71,54 +105,48 @@ public class DashboardFragment extends Fragment {
         binding = null;
     }
 
-    private void launchGoogleMapsIntent(Order order) {
-        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            //   return TODO;
-        }
-        fusedLocationClient.getCurrentLocation(Priority.PRIORITY_BALANCED_POWER_ACCURACY, null).addOnSuccessListener(getActivity(), location -> {
-            // Got last known location. In some rare situations this can be null.
-            if (location != null) {
-                currentLocation = location;
-            }
-        });
-        if (currentLocation != null) {
-            double currentLatitude = currentLocation.getLatitude();
-            double currentLongitude = currentLocation.getLongitude();
+    private void checkLocationPermissionAndLaunchGoogleMaps(Order order) {
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-            // Define your waypoint and destination coordinates
-            String waypoint = String.format("%f,%f", order.getDonatorLocation().getLatitude(), order.getDonatorLocation().getLongitude());
-            String destination = String.format("%f,%f", order.getAssociationLocation().getLatitude(), order.getAssociationLocation().getLongitude());
-
-
-            // Create the Uri for the Google Maps directions intent
-            Uri gmmIntentUri = Uri.parse("https://www.google.com/maps/dir/?api=1" +
-                    "&origin=" + currentLatitude + "," + currentLongitude +
-                    "&destination=" + destination +
-                    "&waypoints=" + waypoint);
-
-            Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-            mapIntent.setPackage("com.google.android.apps.maps");
-
-            // Verify that the intent resolves to an activity
-            if (mapIntent.resolveActivity(getContext().getPackageManager()) != null) {
-                startActivity(mapIntent);
-            } else {
-                // Handle the case where no activity can handle the intent
-            }
+            // Store order temporarily and request permissions
+            orderToLaunch = order;
+            locationPermissionLauncher.launch(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION});
         } else {
-            // Handle the case where current location is not available
+            // Permissions are already granted
+            getLastLocationAndLaunchGoogleMaps(order);
         }
     }
 
+    private void getLastLocationAndLaunchGoogleMaps(Order order) {
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+
+        fusedLocationClient.getCurrentLocation(Priority.PRIORITY_BALANCED_POWER_ACCURACY, null).addOnSuccessListener(getActivity(), location -> {
+            if (location != null) {
+                currentLocation = location;
+
+                double currentLatitude = currentLocation.getLatitude();
+                double currentLongitude = currentLocation.getLongitude();
+
+                String waypoint = String.format("%f,%f", 32.023388, 34.762420);
+                String destination = String.format("%f,%f", order.getAssociationLocation().getLat(), order.getAssociationLocation().getLng());
+                Log.d("@@@@@@@@@@@@@@@@@@@@2", "getLastLocationAndLaunchGoogleMaps: "+waypoint+" "+destination);
+                Uri gmmIntentUri = Uri.parse("https://www.google.com/maps/dir/?api=1" +
+                        "&origin=" + currentLatitude + "," + currentLongitude +
+                        "&destination=" + destination +
+                        "&waypoints=" + waypoint);
+
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                mapIntent.setPackage("com.google.android.apps.maps");
+
+                if (mapIntent.resolveActivity(getContext().getPackageManager()) != null) {
+                    startActivity(mapIntent);
+                }
+            } else {
+                // Handle the case where current location is not available
+            }
+        });
+    }
 }
-
-
-
-

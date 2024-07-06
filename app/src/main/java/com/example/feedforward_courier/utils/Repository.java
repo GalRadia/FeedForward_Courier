@@ -2,9 +2,6 @@ package com.example.feedforward_courier.utils;
 
 import android.util.Log;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-
 import com.example.feedforward_courier.interfacea.ApiCallback;
 import com.example.feedforward_courier.interfacea.ApiService;
 import com.example.feedforward_courier.models.Order;
@@ -27,7 +24,6 @@ import retrofit2.Response;
 public class Repository {
     private static Repository instance;
     private ApiService apiService;
-    private MutableLiveData<List<Order>> ordersLiveData;
 
     private Repository() {
 
@@ -41,15 +37,13 @@ public class Repository {
         return instance;
     }
 
-    public void getAllOrders(String userSuperApp, String userEmail, int size, int page, ApiCallback<List<Order>> callback) {
+    public void getAllOrders(String userSuperApp, String userEmail, int size, int page, ApiCallback<List<ObjectBoundary>> callback) {
         apiService.getAllObjctsByType("Order", userSuperApp, userEmail, size, page).enqueue(new Callback<List<ObjectBoundary>>() {
             @Override
             public void onResponse(Call<List<ObjectBoundary>> call, Response<List<ObjectBoundary>> response) {
                 if (response.isSuccessful()) {
-                    List<Order> orders = Order.convertObjectBoundaryList(response.body());
-                    orders.addAll(orders);
-                    callback.onSuccess(orders);
-                    Log.d("DatabaseRepository", "onResponse: GET " + orders);
+                    callback.onSuccess(response.body());
+                    Log.d("DatabaseRepository", "onResponse: GET " );
                 }
             }
 
@@ -57,6 +51,7 @@ public class Repository {
             public void onFailure(Call<List<ObjectBoundary>> call, Throwable t) {
                 // Handle failure
                 Log.d("DatabaseRepository", "onFailure: GET " + t.getMessage());
+                callback.onError(t.getMessage());
             }
         });
     }
@@ -155,8 +150,8 @@ public class Repository {
         CommandBoundary commandBoundary = new CommandBoundary("SBRT");
         Map<String, Object> commandMap = Map.of(
                 "type", "Order",
-                "lat", location.getLatitude(),
-                "lng",location.getLongitude(),
+                "lat", location.getLat(),
+                "lng",location.getLng(),
                 "distance", distance,
                 "distanceUnit", unit
                 );
@@ -180,37 +175,7 @@ public class Repository {
         });
 
     }
-    public void getAllOrdersByCommandAndLocationLiveData(DistanceUnit unit, Location location, double distance) {
-        CommandBoundary commandBoundary = new CommandBoundary("SBRT");
-        Map<String, Object> commandMap = Map.of(
-                "type", "Order",
-                "lat", location.getLatitude(),
-                "lng",location.getLongitude(),
-                "distance", distance,
-                "distanceUnit", unit
-        );
-        commandBoundary.setCommandAttributes(commandMap);
-        Call<List<ObjectBoundary>> call = apiService.command(UserSession.getInstance().getSUPERAPP(), commandBoundary);
-        call.enqueue(new Callback<List<ObjectBoundary>>() {
-            @Override
-            public void onResponse(Call<List<ObjectBoundary>> call, Response<List<ObjectBoundary>> response) {
-                if (response.isSuccessful()) {
-                    List<Order> orders = Order.convertObjectBoundaryList(response.body());
-                    Log.d("DatabaseRepository", "onResponse: GET " + orders);
-                    ordersLiveData.postValue(orders);
-                }
-            }
 
-            @Override
-            public void onFailure(Call<List<ObjectBoundary>> call, Throwable t) {
-                // Handle failure
-                Log.d("DatabaseRepository", "onFailure: GET " + t.getMessage());
-            }
-        });
-    }
-    public LiveData<List<Order>> getOrdersLiveData() {
-        return ordersLiveData;
-    }
     public void updateObject(ObjectBoundary object){
         Call<Void> call = apiService.updateObject(object.getObjectId().getId(), object.getObjectId().getSuperapp(), UserSession.getInstance().getSUPERAPP(), UserSession.getInstance().getUserEmail(), object);
         call.enqueue(new Callback<Void>() {

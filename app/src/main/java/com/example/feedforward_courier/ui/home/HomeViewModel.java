@@ -1,12 +1,12 @@
 package com.example.feedforward_courier.ui.home;
 
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.feedforward_courier.interfacea.ApiCallback;
 import com.example.feedforward_courier.models.Order;
-import com.example.feedforward_courier.models.server.DistanceUnit;
-import com.example.feedforward_courier.models.server.object.Location;
+import com.example.feedforward_courier.models.server.object.ObjectBoundary;
+import com.example.feedforward_courier.models.server.user.UserSession;
 import com.example.feedforward_courier.utils.Repository;
 
 import java.util.List;
@@ -14,28 +14,36 @@ import java.util.List;
 public class HomeViewModel extends ViewModel {
 
     private final MutableLiveData<String> mText;
-    private LiveData<List<Order>> ordersLiveData;
     private Repository repository;
 
     public HomeViewModel() {
         repository = Repository.getInstance();
         mText = new MutableLiveData<>();
         mText.setValue("This is home fragment");
-        ordersLiveData = repository.getOrdersLiveData();
+        UserSession.getInstance().setUserEmail("Gal@mail.com");
 
     }
 
-    public LiveData<String> getText() {
-        return mText;
-    }
-    public LiveData<List<Order>> getOrders() {
-        return ordersLiveData;
+    public void getOrders(ApiCallback<List<Order>> callback){
+        repository.getAllOrders(UserSession.getInstance().getSUPERAPP(), UserSession.getInstance().getUserEmail(), 50, 0, new ApiCallback<List<ObjectBoundary>>() {
+            @Override
+            public void onSuccess(List<ObjectBoundary> result) {
+                List<Order> orders = Order.convertObjectBoundaryList(result);
+                callback.onSuccess(orders);
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        });
+
     }
 
-    public void fetchAllOrders(DistanceUnit unit, Location location, double distance) {
-        repository.getAllOrdersByCommandAndLocationLiveData(unit, location, distance);
-    }
+
+
     public void updateOrder(Order order){
-        repository.updateObject(order.convert(order));
+        ObjectBoundary objectBoundary = order.convert(order);
+        repository.updateObject(objectBoundary);
     }
 }
