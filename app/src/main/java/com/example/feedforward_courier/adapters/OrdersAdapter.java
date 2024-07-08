@@ -52,8 +52,9 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
     @Override
     public void onBindViewHolder(@NonNull OrderViewHolder holder, int position) {
         Order order = filteredOrders.get(position);
+        holder.associationName.setText(order.getAssociationName());
         holder.restaurantName.setText(order.getDonatorName());
-        holder.restaurantLocation.setText(order.getDonatorLocation().toString());
+        holder.restaurantLocation.setText(order.getDonatorAddress());
         switch (order.getOrderStatus()) {
             case PENDING:
                 holder.statusButton.setText("Pending");
@@ -86,6 +87,9 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
                     notifyDataSetChanged();
                 }
             });
+        }
+        else {
+            holder.startButton.setVisibility(View.GONE);
         }
     }
 

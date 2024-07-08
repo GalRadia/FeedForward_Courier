@@ -40,7 +40,8 @@ public class ActiveOrdersAdapter extends RecyclerView.Adapter<ActiveOrdersAdapte
     public void onBindViewHolder(@NonNull ActiveOrdersViewHolder holder, int position) {
         Order order = orderList.get(position);
         holder.restaurantName.setText(order.getDonatorName());
-        holder.restaurantLocation.setText(order.getDonatorLocation().toString());
+        holder.restaurantLocation.setText(order.getDonatorAddress());
+        holder.associationLocation.setText(order.getAssociationAddress());
         StringBuilder items = new StringBuilder();
         for (Food food : order.getFoods()) {
             items.append(food.getName()).append(", ");

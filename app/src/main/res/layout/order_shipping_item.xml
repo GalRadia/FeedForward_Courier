@@ -4,8 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="16dp"
+    android:background="@color/quantum_white_100"
     android:padding="8dp"
-    android:background="?attr/selectableItemBackground">
+    app:cardBackgroundColor="#FFFF"
+    app:cardElevation="4dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -39,9 +41,10 @@
             android:id="@+id/TXT_Restaurant_Name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
+            android:gravity="start"
             android:text="Restaurant Name"
-            app:layout_constraintEnd_toStartOf="@id/TXT_Restaurant_Location"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintEnd_toStartOf="@+id/guideline"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -50,9 +53,11 @@
             android:id="@+id/TXT_Restaurant_Location"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
+            android:gravity="end"
             android:text="Restaurant Location"
+            app:layout_constrainedWidth="true"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toEndOf="@id/TXT_Restaurant_Name"
             app:layout_constraintTop_toTopOf="@id/TXT_Restaurant_Name" />
 
@@ -62,9 +67,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
+            android:gravity="start"
             android:text="Association Name"
-            app:layout_constraintEnd_toStartOf="@id/TXT_Association_Location"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintEnd_toStartOf="@+id/guideline"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/TXT_Restaurant_Location" />
 
@@ -73,11 +79,13 @@
             android:id="@+id/TXT_Association_Location"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
+            android:gravity="end"
             android:text="Association Location"
+            app:layout_constrainedWidth="true"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/TXT_Association_Name"
-            app:layout_constraintTop_toTopOf="@id/TXT_Association_Name" />
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintTop_toTopOf="@+id/TXT_Association_Name" />
 
         <!-- Order Details -->
         <com.google.android.material.textview.MaterialTextView
@@ -85,22 +93,37 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:layout_marginBottom="16dp"
+            android:gravity="start"
             android:text="Order Details"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/TXT_Association_Location" />
+            app:layout_constrainedWidth="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/TXT_Association_Name"
+            app:layout_constraintTop_toBottomOf="@id/TXT_Association_Location"
+            app:layout_constraintVertical_bias="0.19999999" />
 
-        <!-- Order Status Button -->
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/BTN_Order_Start"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="16dp"
             android:src="@drawable/ic_map"
-            app:layout_constraintEnd_toStartOf="@+id/TXT_Date"
-            app:layout_constraintHorizontal_bias="0.79"
+            app:fabSize="auto"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toEndOf="@+id/TXT_Order_Details"
-            app:layout_constraintTop_toBottomOf="@+id/TXT_Association_Location" />
+            app:layout_constraintTop_toBottomOf="@+id/TXT_Time" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.49311295" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

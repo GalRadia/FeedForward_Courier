@@ -21,7 +21,7 @@ public class CommandBoundary {
 
     }
     public CommandBoundary(String command){
-        this.setCommandId(new CommandId(UserSession.getInstance().getSUPERAPP(),UserSession.getInstance().getBoundaryId(),"123"));
+        //this.setCommandId(new CommandId(UserSession.getInstance().getSUPERAPP(),UserSession.getInstance().getBoundaryId(),"123"));
         this.setInvokedBy(new InvokedBy(UserSession.getInstance().getSUPERAPP(),UserSession.getInstance().getUserEmail()));
         this.setCommandAttributes(null);
         this.setTargetObject(new TargetObject(UserSession.getInstance().getSUPERAPP(),UserSession.getInstance().getBoundaryId()));
