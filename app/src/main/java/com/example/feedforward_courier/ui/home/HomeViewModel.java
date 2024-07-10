@@ -1,5 +1,7 @@
 package com.example.feedforward_courier.ui.home;
 
+import android.util.Log;
+
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -20,7 +22,7 @@ public class HomeViewModel extends ViewModel {
         repository = Repository.getInstance();
         mText = new MutableLiveData<>();
         mText.setValue("This is home fragment");
-        UserSession.getInstance().setUserEmail("Gal@mail.com");
+
 
     }
 
@@ -34,7 +36,7 @@ public class HomeViewModel extends ViewModel {
 
             @Override
             public void onError(String error) {
-
+                Log.e("HomeViewModel", "getOrders: " + error);
             }
         });
 

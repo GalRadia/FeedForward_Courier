@@ -57,6 +57,7 @@ dependencies {
     implementation(libs.play.services.maps)
     implementation(platform(libs.kotlin.bom))
     implementation(libs.places)
+    implementation(libs.activity)
 
 
     testImplementation(libs.junit)
