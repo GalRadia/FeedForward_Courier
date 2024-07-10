@@ -55,21 +55,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         holder.associationName.setText(order.getAssociationName());
         holder.restaurantName.setText(order.getDonatorName());
         holder.restaurantLocation.setText(order.getDonatorAddress());
-        switch (order.getOrderStatus()) {
-            case PENDING:
-                holder.statusButton.setText("Pending");
-                holder.statusButton.setIcon(context.getDrawable(R.drawable.ic_pending));
-                break;
-            case DELIVERED:
-                holder.statusButton.setText("Delivered\nWrite a review");
-                holder.statusButton.setIcon(context.getDrawable(R.drawable.ic_done));
-                break;
-            case ACTIVE:
-                holder.statusButton.setText("Active");
-                holder.statusButton.setIcon(context.getDrawable(R.drawable.ic_ongoing_shipment));
-                break;
 
-        }
         StringBuilder items = new StringBuilder();
         for (Food food : order.getFoods()) {
             items.append(food.getName()).append(", ");

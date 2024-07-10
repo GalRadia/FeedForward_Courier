@@ -197,6 +197,7 @@ public class LoginActivity extends AppCompatActivity {
                         Toast.makeText(LoginActivity.this, "Courier created successfully", Toast.LENGTH_SHORT).show();
                         UserBoundary updatedUser = userResult;
                         updatedUser.setUserName(result.getObjectId().getId());
+                        updatedUser.setRole(RoleEnum.MINIAPP_USER);
                         apiRepository.updateUser(UserSession.getInstance().getSUPERAPP(),email, updatedUser, new ApiCallback<Void>() {
                             @Override
                             public void onSuccess(Void unused) {

@@ -7,6 +7,9 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.feedforward_courier.interfacea.ApiCallback;
 import com.example.feedforward_courier.models.Order;
+import com.example.feedforward_courier.models.OrderStatus;
+import com.example.feedforward_courier.models.server.DistanceUnit;
+import com.example.feedforward_courier.models.server.object.Location;
 import com.example.feedforward_courier.models.server.object.ObjectBoundary;
 import com.example.feedforward_courier.models.server.user.UserSession;
 import com.example.feedforward_courier.utils.Repository;
@@ -17,6 +20,8 @@ public class HomeViewModel extends ViewModel {
 
     private final MutableLiveData<String> mText;
     private Repository repository;
+    private MutableLiveData<Location> currentLocation = new MutableLiveData<>();
+
 
     public HomeViewModel() {
         repository = Repository.getInstance();
@@ -47,5 +52,29 @@ public class HomeViewModel extends ViewModel {
     public void updateOrder(Order order){
         ObjectBoundary objectBoundary = order.convert(order);
         repository.updateObject(objectBoundary);
+    }
+
+    public void setCurrentLocation(Location location) {
+        currentLocation.setValue(location);
+
+    }
+    public void getPendingOrdersByLocation(double distance, ApiCallback<List<Order>> callback) {
+        repository.getAllOrdersByCommandAndLocation(DistanceUnit.KILOMETERS, currentLocation.getValue(), distance, new ApiCallback<List<ObjectBoundary>>() {
+            @Override
+            public void onSuccess(List<ObjectBoundary> result) {
+                List<Order> orders = Order.convertObjectBoundaryList(result);
+                for (int i = 0; i < orders.size(); i++) {
+                    if (orders.get(i).getOrderStatus() != OrderStatus.PENDING) {
+                        orders.remove(i);
+                    }
+                }
+                callback.onSuccess(orders);
+            }
+
+            @Override
+            public void onError(String error) {
+                callback.onError(error);
+            }
+        });
     }
 }

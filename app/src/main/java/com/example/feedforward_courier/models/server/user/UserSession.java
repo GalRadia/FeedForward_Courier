@@ -7,9 +7,6 @@ public class UserSession {
     private String userEmail;
     private final String SUPERAPP= "2024b.gal.said";
 
-
-
-
     public String getSUPERAPP() {
         return SUPERAPP;
     }

@@ -149,7 +149,7 @@ public class Repository {
         });
     }
 
-    public void getAllOrdersByCommandAndLocation(DistanceUnit unit, Location location, double distance, ApiCallback<List<Order>> callback) {
+    public void getAllOrdersByCommandAndLocation(DistanceUnit unit, Location location, double distance, ApiCallback<List<ObjectBoundary>> callback) {
         CommandBoundary commandBoundary = new CommandBoundary("SBRT");
         Map<String, Object> commandMap = Map.of(
                 "type", "Order",
@@ -175,9 +175,8 @@ public class Repository {
                                     updateUser(UserSession.getInstance().getSUPERAPP(), UserSession.getInstance().getUserEmail(), user, new ApiCallback<Void>() {
                                         @Override
                                         public void onSuccess(Void unused) {
-                                            List<Order> orders = Order.convertObjectBoundaryList(response.body());
-                                            callback.onSuccess(orders);
-                                            Log.d("DatabaseRepository", "onResponse: GET " + orders);
+                                            callback.onSuccess(response.body());
+                                            Log.d("DatabaseRepository", "onResponse: GET " + response.body());
                                         }
 
                                         @Override

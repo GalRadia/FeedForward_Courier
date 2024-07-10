@@ -15,7 +15,7 @@
         android:layout_marginEnd="8dp"
         android:text="Orders"
         android:textAlignment="center"
-        android:textSize="20sp"
+        android:textSize="32sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -28,45 +28,43 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/GRP_filter"
+        app:layout_constraintTop_toBottomOf="@+id/buttonGroup"
         tools:listitem="@layout/order_item" />
 
-    <com.google.android.material.chip.ChipGroup
-        android:id="@+id/GRP_filter"
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/buttonGroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        app:checkedButton="@id/KM5_BTN"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/TXT_Ongoing_Order"
-        app:selectionRequired="false"
-        app:singleLine="true"
-        app:singleSelection="false">
+        app:selectionRequired="true"
+        app:singleSelection="true">
 
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip_pending"
-            style="@style/Widget.Material3.Chip.Filter"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/KM5_BTN"
+            style="?attr/materialButtonOutlinedStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Pending"
-            app:chipStrokeColor="@color/status_pending" />
+            android:text="5KM" />
 
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip_ongoing"
-            style="@style/Widget.Material3.Chip.Filter"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/KM15_BTN"
+            style="?attr/materialButtonOutlinedStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="32dp"
-            android:text="Ongoing"
-            app:chipStrokeColor="@color/status_ongoing" />
+            android:text="15KM" />
 
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip_finished"
-            style="@style/Widget.Material3.Chip.Filter"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/KM30_BTN"
+            style="?attr/materialButtonOutlinedStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Finished"
-            app:chipStrokeColor="@color/status_finished" />
-    </com.google.android.material.chip.ChipGroup>
+            android:text="30KM" />
+
+    </com.google.android.material.button.MaterialButtonToggleGroup>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
