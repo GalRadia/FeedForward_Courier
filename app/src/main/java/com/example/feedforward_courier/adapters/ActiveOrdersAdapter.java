@@ -2,15 +2,19 @@ package com.example.feedforward_courier.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.feedforward_courier.databinding.OrderShippingItemBinding;
+import com.example.feedforward_courier.interfacea.ActiveOrderCallback;
 import com.example.feedforward_courier.interfacea.OrderCallback;
 import com.example.feedforward_courier.models.Food;
 import com.example.feedforward_courier.models.Order;
+import com.example.feedforward_courier.models.OrderStatus;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textview.MaterialTextView;
 
@@ -18,21 +22,22 @@ import java.util.List;
 
 public class ActiveOrdersAdapter extends RecyclerView.Adapter<ActiveOrdersAdapter.ActiveOrdersViewHolder> {
     Context context;
-    OrderShippingItemBinding binding;
     private List<Order> orderList;
-    private OrderCallback activeOrderCallback;
-   public ActiveOrdersAdapter(Context context, List<Order> orders) {
+    private ActiveOrderCallback activeOrderCallback;
+
+    public ActiveOrdersAdapter(Context context, List<Order> orders) {
         this.context = context;
         this.orderList = orders;
     }
-    public void setActiveOrderCallback(OrderCallback activeOrderCallback) {
+
+    public void setActiveOrderCallback(ActiveOrderCallback activeOrderCallback) {
         this.activeOrderCallback = activeOrderCallback;
     }
 
     @NonNull
     @Override
     public ActiveOrdersViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        binding = OrderShippingItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+        OrderShippingItemBinding binding = OrderShippingItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
         return new ActiveOrdersViewHolder(binding);
     }
 
@@ -46,14 +51,24 @@ public class ActiveOrdersAdapter extends RecyclerView.Adapter<ActiveOrdersAdapte
         for (Food food : order.getFoods()) {
             items.append(food.getName()).append(", ");
         }
-        if (items.charAt(items.length() - 1) == ' ')
+        if (items.length() > 0 && items.charAt(items.length() - 1) == ' ')
             items.deleteCharAt(items.length() - 2);
-        holder.foodItems.setText(items);//TODO: Implement a way to show the food items
+        holder.foodItems.setText(items);
         holder.donationDate.setText(order.getOrderDate());
         holder.donationTime.setText(order.getOrderTime());
-        holder.statusButton.setOnClickListener(v -> activeOrderCallback.onStartOrder(order));
 
+        if (order.getOrderStatus() == OrderStatus.ACTIVE) {
+            holder.finishButton.setVisibility(View.VISIBLE);
+            holder.finishButton.setOnClickListener(v -> {
+                order.setOrderStatus(OrderStatus.DELIVERED);
+                activeOrderCallback.onFinishOrder(order);
+                holder.finishButton.setVisibility(View.GONE);
+            });
+        } else {
+            holder.finishButton.setVisibility(View.GONE);
+        }
 
+        holder.statusButton.setOnClickListener(v -> activeOrderCallback.onStartNavigation(order));
     }
 
     public void setOrders(List<Order> orders) {
@@ -63,11 +78,8 @@ public class ActiveOrdersAdapter extends RecyclerView.Adapter<ActiveOrdersAdapte
 
     @Override
     public int getItemCount() {
-        if (orderList != null)
-            return orderList.size();
-        return 0;
+        return orderList != null ? orderList.size() : 0;
     }
-
 
     public class ActiveOrdersViewHolder extends RecyclerView.ViewHolder {
         MaterialTextView associationName;
@@ -78,6 +90,7 @@ public class ActiveOrdersAdapter extends RecyclerView.Adapter<ActiveOrdersAdapte
         MaterialTextView donationTime;
         MaterialTextView restaurantName;
         MaterialTextView restaurantLocation;
+        ExtendedFloatingActionButton finishButton;
 
         public ActiveOrdersViewHolder(OrderShippingItemBinding binding) {
             super(binding.getRoot());
@@ -89,6 +102,7 @@ public class ActiveOrdersAdapter extends RecyclerView.Adapter<ActiveOrdersAdapte
             donationTime = binding.TXTTime;
             restaurantName = binding.TXTRestaurantName;
             restaurantLocation = binding.TXTRestaurantLocation;
+            finishButton = binding.BTNPCKFinish;
         }
     }
 }

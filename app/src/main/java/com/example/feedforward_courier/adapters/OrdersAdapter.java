@@ -15,6 +15,7 @@ import com.example.feedforward_courier.models.Food;
 import com.example.feedforward_courier.models.Order;
 import com.example.feedforward_courier.models.OrderStatus;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.textview.MaterialTextView;
 
 import java.util.ArrayList;
@@ -131,6 +132,8 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         MaterialButton statusButton;
         MaterialButton startButton;
         MaterialTextView donationDate;
+        ExtendedFloatingActionButton finishButton;
+
         MaterialTextView donationTime;
         MaterialTextView restaurantName;
         MaterialTextView restaurantLocation;
@@ -146,6 +149,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             restaurantName = binding.TXTRestaurantName;
             restaurantLocation = binding.TXTRestaurantLocation;
             startButton = binding.BTNStartOrder;
+
 
         }
     }

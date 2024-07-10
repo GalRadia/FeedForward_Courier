@@ -43,9 +43,8 @@ public class HomeViewModel extends ViewModel {
     }
 
 
-
-    public void updateOrder(Order order){
-        ObjectBoundary objectBoundary = order.convert(order);
-        repository.updateObject(objectBoundary);
+    public void updateOrder(Order order, ApiCallback<Void> callback) {
+        ObjectBoundary objectBoundary = order.convert(order, order.getDonatorEmail());
+        repository.updateObject(objectBoundary, callback);
     }
 }

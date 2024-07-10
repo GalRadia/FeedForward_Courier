@@ -69,6 +69,6 @@ public interface ApiService {
                                            @Query("userSuperapp") String userSuperApp,
                                            @Query("userEmail") String userEmail);
 
-
+    
 
 }

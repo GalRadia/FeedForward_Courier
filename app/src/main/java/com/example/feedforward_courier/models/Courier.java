@@ -5,23 +5,39 @@ import com.example.feedforward_courier.models.server.object.CreatedBy;
 import com.example.feedforward_courier.models.server.object.ObjectBoundary;
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 public class Courier {
-    private String courierId;
     private String courierName;
     private String courierPhone;
     private String courierEmail;
     private StatusOfCourier status;
+    private ArrayList<String> allOrders;
 
-    public String getCourierId() {
-        return courierId;
+    public Courier() {
     }
 
-    public Courier setCourierId(String courierId) {
-        this.courierId = courierId;
+    public Courier(ObjectBoundary objectBoundary) {
+        Gson gson = new Gson();
+        Courier temp = gson.fromJson((String) objectBoundary.getObjectDetails().get("Courier"), Courier.class);
+        this.courierName = temp.getCourierName();
+        this.courierPhone = temp.getCourierPhone();
+        this.courierEmail = temp.getCourierEmail();
+        this.status = temp.getStatus();
+        this.allOrders = temp.getAllOrders();
+    }
+
+
+    public ArrayList<String> getAllOrders() {
+        return allOrders;
+    }
+
+    public Courier setAllOrders(ArrayList<String> allOrders) {
+        this.allOrders = allOrders;
         return this;
     }
+
 
     public String getCourierName() {
         return courierName;
@@ -58,7 +74,6 @@ public class Courier {
         this.status = status;
         return this;
     }
-
 
 
     public ObjectBoundary toObjectBoundary(String email) {
