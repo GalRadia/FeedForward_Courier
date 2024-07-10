@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- res/values/styles.xml -->
+<resources>
+    <!-- Custom style for rounded buttons -->
+    <style name="Widget.MaterialComponents.Button.OutlinedButton.Rounded" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.MaterialComponents.Button.Rounded</item>
+    </style>
+
+    <!-- Define the shape appearance overlay for rounded buttons -->
+    <style name="ShapeAppearanceOverlay.MaterialComponents.Button.Rounded" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+</resources>
+
+

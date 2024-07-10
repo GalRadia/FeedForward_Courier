@@ -21,42 +21,42 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.feedforward_courier.R;
 import com.example.feedforward_courier.adapters.ActiveOrdersAdapter;
 import com.example.feedforward_courier.databinding.FragmentDashboardBinding;
 import com.example.feedforward_courier.interfacea.ApiCallback;
 import com.example.feedforward_courier.models.Order;
+import com.example.feedforward_courier.models.OrderStatus;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
+import com.google.android.material.button.MaterialButtonToggleGroup;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class DashboardFragment extends Fragment {
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
 
-    private FusedLocationProviderClient fusedLocationClient;
+
     private RecyclerView recyclerView;
     private DashboardViewModel dashboardViewModel;
-    private Location currentLocation = null;
     private ActiveOrdersAdapter adapter;
+    private MaterialButtonToggleGroup toggleButtonGroup;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+    private Location currentLocation = null;
+    private FusedLocationProviderClient fusedLocationClient;
+    private ActivityResultLauncher<String[]> locationPermissionLauncher;
+    private Order orderToLaunch; // Temporary storage to hold order until locationisfetched
 
     private FragmentDashboardBinding binding;
-
-    private ActivityResultLauncher<String[]> locationPermissionLauncher;
-    private Order orderToLaunch; // Temporary storage to hold order until location is fetched
+    private List<Order> allOrders = new ArrayList<>();
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        dashboardViewModel =
-                new ViewModelProvider(this).get(DashboardViewModel.class);
+        dashboardViewModel = new ViewModelProvider(this).get(DashboardViewModel.class);
 
         binding = FragmentDashboardBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
-        findViews();
-        initViews();
 
-        // Initialize the ActivityResultLauncher for requesting permissions
         locationPermissionLauncher = registerForActivityResult(
                 new ActivityResultContracts.RequestMultiplePermissions(),
                 result -> {
@@ -71,32 +71,97 @@ public class DashboardFragment extends Fragment {
                     } else {
                         // Permission denied, handle accordingly
                     }
-                });
+   });
+
+        View root = binding.getRoot();
+        findViews();
+        initViews();
+        setupToggleButtons();
 
         return root;
     }
 
     private void initViews() {
         adapter = new ActiveOrdersAdapter(getContext(), new ArrayList<>());
-        adapter.setActiveOrderCallback(this::checkLocationPermissionAndLaunchGoogleMaps);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        dashboardViewModel.getOrders(new ApiCallback<List<Order>>() {
+
+        dashboardViewModel.getCourierOrders(new ApiCallback<List<Order>>() {
             @Override
             public void onSuccess(List<Order> result) {
-                adapter.setOrders(result);
+                allOrders = result;
+                filterOrdersByStatus();
             }
 
             @Override
             public void onError(String error) {
-
+                // Handle error
             }
         });
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
     }
 
+    private void setupToggleButtons() {
+        toggleButtonGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+            if (isChecked) {
+                List<Order> filteredOrders = new ArrayList<>();
+                if (checkedId == R.id.button1) {
+                    for (Order order : allOrders) {
+                        if (order.getOrderStatus() == OrderStatus.ACTIVE) {
+                            filteredOrders.add(order);
+                        }
+                    }
+                } else if (checkedId == R.id.button2) {
+                    for (Order order : allOrders) {
+                        if (order.getOrderStatus() == OrderStatus.DELIVERED) {
+                            filteredOrders.add(order);
+                        }
+                    }
+                }
+                adapter.setOrders(filteredOrders);
+            }
+        });
+        toggleButtonGroup.check(R.id.button1); // Ensure one button is always checked
+    }
+
     private void findViews() {
         recyclerView = binding.orderShippingRecyclerView;
+        toggleButtonGroup = binding.toggleButton;
+    }
+
+    private void filterOrdersByStatus() {
+        List<Order> filteredOrders = new ArrayList<>();
+        int checkedButtonId = toggleButtonGroup.getCheckedButtonId();
+
+        if (checkedButtonId == R.id.button1) { // Ongoing
+            for (Order order : allOrders) {
+                if (order.getOrderStatus() == OrderStatus.ACTIVE) {
+                    filteredOrders.add(order);
+                }
+            }
+        } else if (checkedButtonId == R.id.button2) { // Finished
+            for (Order order : allOrders) {
+                if (order.getOrderStatus() == OrderStatus.DELIVERED) {
+                    filteredOrders.add(order);
+                }
+            }
+        }
+        adapter.setOrders(filteredOrders);
+    }
+
+    private void finishOrder(Order order) {
+        order.setOrderStatus(OrderStatus.DELIVERED);
+        dashboardViewModel.updateOrderStatus(order, new ApiCallback<Void>() {
+            @Override
+            public void onSuccess(Void result) {
+                filterOrdersByStatus(); // Update the list to hide the button
+            }
+
+            @Override
+            public void onError(String error) {
+                // Handle error
+            }
+        });
     }
 
     @Override
@@ -104,6 +169,7 @@ public class DashboardFragment extends Fragment {
         super.onDestroyView();
         binding = null;
     }
+
 
     private void checkLocationPermissionAndLaunchGoogleMaps(Order order) {
         if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
@@ -147,6 +213,6 @@ public class DashboardFragment extends Fragment {
             } else {
                 // Handle the case where current location is not available
             }
-        });
-    }
+ });
+}
 }

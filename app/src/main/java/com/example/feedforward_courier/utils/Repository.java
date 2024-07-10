@@ -215,24 +215,28 @@ public class Repository {
         });
     }
 
-    public void updateObject(ObjectBoundary object) {
+    public void updateObject(ObjectBoundary object, ApiCallback<Void> callback) {
         Call<Void> call = apiService.updateObject(object.getObjectId().getId(), object.getObjectId().getSuperapp(), UserSession.getInstance().getSUPERAPP(), UserSession.getInstance().getUserEmail(), object);
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-                    Log.d(" DatabaseRepository", "onResponse: " + response.body());
+                    Log.d("DatabaseRepository", "onResponse: " + response.body());
+                    callback.onSuccess(null);  // Indicate success to the callback
                 } else {
-                    Log.d(" DatabaseRepository", "onError: " + response.code());
+                    Log.d("DatabaseRepository", "onError: " + response.code());
+                    callback.onError("Error: " + response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                Log.d(" DatabaseRepository", "onFailure: " + t.getMessage());
+                Log.d("DatabaseRepository", "onFailure: " + t.getMessage());
+                callback.onError("Failure: " + t.getMessage());
             }
         });
     }
+
 
 
     public void getSpecificObject(String superapp, String id, String userSuperApp, String userEmail, final ApiCallback<ObjectBoundary> callback) {
