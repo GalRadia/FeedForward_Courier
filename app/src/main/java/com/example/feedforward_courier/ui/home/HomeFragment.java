@@ -22,9 +22,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.feedforward_courier.adapters.OrdersAdapter;
 import com.example.feedforward_courier.databinding.FragmentHomeBinding;
 import com.example.feedforward_courier.interfacea.ApiCallback;
+import com.example.feedforward_courier.models.Courier;
 import com.example.feedforward_courier.models.Order;
 import com.example.feedforward_courier.models.OrderStatus;
 import com.example.feedforward_courier.models.server.object.Location;
+import com.example.feedforward_courier.models.server.user.UserSession;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.button.MaterialButton;
@@ -44,7 +46,7 @@ public class HomeFragment extends Fragment {
     private FusedLocationProviderClient fusedLocationClient;
     private ActivityResultLauncher<String[]> locationPermissionLauncher;
     private Location currentLocation;
-
+    private double currentDistance = 5;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -63,14 +65,13 @@ public class HomeFragment extends Fragment {
                     }
                 }
         );
-        homeViewModel =
-                new ViewModelProvider(this).get(HomeViewModel.class);
+        homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+        requestLocationPermissions();
         findViews();
         initViews();
-        requestLocationPermissions();
         return root;
     }
 
@@ -79,7 +80,6 @@ public class HomeFragment extends Fragment {
         super.onDestroyView();
         binding = null;
     }
-
 
     private void findViews() {
         recyclerView = binding.RCVOngoingOrder;
@@ -95,51 +95,66 @@ public class HomeFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter.setOrderCallback(order -> {
             order.setOrderStatus(OrderStatus.ACTIVE);
-            homeViewModel.updateOrder(order);
-        });
-        homeViewModel.getPendingOrdersByLocation(5, new ApiCallback<List<Order>>() {
-            @Override
-            public void onSuccess(List<Order> orders) {
-                adapter.setDonations(orders);
-            }
-
-            @Override
-            public void onError(String error) {
-                Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
-                Log.d("HomeFragment", "onError: " + error);
-            }
-        });
-        toggleGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
-            if (isChecked) {
-                double distance = 0;
-                if (checkedId == KM5.getId()) {
-                    distance = 5;
-                } else if (checkedId == KM15.getId()) {
-                    distance = 15;
-                } else if (checkedId == KM30.getId()) {
-                    distance = 30;
-                }
-
-                if (currentLocation != null) {
-                    homeViewModel.getPendingOrdersByLocation(distance, new ApiCallback<List<Order>>() {
+            homeViewModel.updateOrder(order, new ApiCallback<Void>() {
+                @Override
+                public void onSuccess(Void result) {
+                    // Handle success
+                    Toast.makeText(getContext(),"Order Updated",Toast.LENGTH_LONG);
+                    Courier courier = UserSession.getInstance().getCourier();
+                    courier.getAllOrders().add(order.getOrderID().getId());
+                    homeViewModel.updateCourier(courier, new ApiCallback<Void>() {
                         @Override
-                        public void onSuccess(List<Order> orders) {
-                            adapter.setDonations(orders);
+                        public void onSuccess(Void result) {
+                            loadOrdersByLocation(currentDistance);
                         }
 
                         @Override
                         public void onError(String error) {
-                            Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
-                            Log.d("HomeFragment", "onError: " + error);
+
                         }
                     });
-                } else {
-                    Toast.makeText(getContext(), "Location isn't available", Toast.LENGTH_SHORT).show();
+
                 }
+
+                @Override
+                public void onError(String error) {
+                    // Handle error
+                }
+            });
+        });
+        loadOrdersByLocation(currentDistance);
+        toggleGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+            if (isChecked) {
+                if (checkedId == KM5.getId()) {
+                    currentDistance = 5;
+                } else if (checkedId == KM15.getId()) {
+                    currentDistance = 15;
+                } else if (checkedId == KM30.getId()) {
+                    currentDistance = 30;
+                }
+                loadOrdersByLocation(currentDistance);
             }
         });
+    }
 
+    private void loadOrdersByLocation(double distance) {
+        if (currentLocation != null) {
+            homeViewModel.getPendingOrdersByLocation(distance, new ApiCallback<List<Order>>() {
+                @Override
+                public void onSuccess(List<Order> orders) {
+                    Toast.makeText(getContext(),"THERE IS LOCATION!!", Toast.LENGTH_LONG);
+                    adapter.setDonations(orders);
+                }
 
+                @Override
+                public void onError(String error) {
+                    Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
+                    Log.d("HomeFragment", "onError: " + error);
+                }
+            });
+        } else {
+            Toast.makeText(getContext(), "Location isn't available", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void requestLocationPermissions() {
@@ -156,11 +171,10 @@ public class HomeFragment extends Fragment {
             if (location != null) {
                 currentLocation = new Location(location.getLatitude(), location.getLongitude());
                 homeViewModel.setCurrentLocation(currentLocation);
+                loadOrdersByLocation(5);  // Load initial orders with default distance
             } else {
                 Log.e("HomeFragment", "Location is null");
             }
         });
     }
-
-
 }

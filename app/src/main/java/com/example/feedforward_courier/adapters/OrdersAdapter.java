@@ -2,13 +2,11 @@ package com.example.feedforward_courier.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.feedforward_courier.R;
 import com.example.feedforward_courier.databinding.OrderItemBinding;
 import com.example.feedforward_courier.interfacea.OrderCallback;
 import com.example.feedforward_courier.models.Food;
@@ -24,16 +22,12 @@ import java.util.List;
 public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewHolder> {
     private Context context;
     private OrderItemBinding binding;
-    private List<Order> originalOrders;
-    private List<Order> filteredOrders;
-    private List<OrderStatus> currentFilterStatuses;
+    private List<Order> orders;
     private OrderCallback orderCallback;
 
     public OrdersAdapter(Context context, List<Order> donations) {
         this.context = context;
-        this.originalOrders = donations != null ? donations : new ArrayList<>();
-        this.filteredOrders = new ArrayList<>(this.originalOrders);
-        this.currentFilterStatuses = new ArrayList<>();
+        this.orders = donations != null ? donations : new ArrayList<>();
 
     }
 
@@ -52,7 +46,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
 
     @Override
     public void onBindViewHolder(@NonNull OrderViewHolder holder, int position) {
-        Order order = filteredOrders.get(position);
+        Order order = orders.get(position);
         holder.associationName.setText(order.getAssociationName());
         holder.restaurantName.setText(order.getDonatorName());
         holder.restaurantLocation.setText(order.getDonatorAddress());
@@ -66,48 +60,30 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         holder.foodItems.setText(items);//TODO: Implement a way to show the food items
         holder.donationDate.setText(order.getOrderDate());
         holder.donationTime.setText(order.getOrderTime());
-        if(order.getOrderStatus() == OrderStatus.PENDING){
-            holder.startButton.setVisibility(View.VISIBLE);
-            holder.startButton.setOnClickListener(v -> {
-                if (orderCallback != null) {
-                    orderCallback.onStartOrder(order);
-                    notifyDataSetChanged();
-                }
-            });
-        }
-        else {
-            holder.startButton.setVisibility(View.GONE);
-        }
+        holder.startButton.setOnClickListener(v -> {
+            if (orderCallback != null) {
+                orderCallback.onStartOrder(order);
+                notifyDataSetChanged();
+                notifyItemRemoved(position);
+            }
+        });
     }
 
     public void setDonations(List<Order> orders) {
-        this.originalOrders = orders != null ? orders : new ArrayList<>();
-        filterDonationsByStatus(this.currentFilterStatuses);
+        this.orders = orders;
+        notifyDataSetChanged(); // Notify the adapter that the data has changed
     }
 
 
 
 
 
-    public void filterDonationsByStatus(List<OrderStatus> statuses) {
-        this.currentFilterStatuses = statuses;
-        if (statuses.isEmpty()) {
-            filteredOrders = new ArrayList<>(originalOrders);
-        } else {
-            filteredOrders = new ArrayList<>();
-            for (Order order : originalOrders) {
-                if (statuses.contains(order.getOrderStatus())) {
-                    filteredOrders.add(order);
-                }
-            }
-        }
-        notifyDataSetChanged();
-    }
+
 
     @Override
     public int getItemCount() {
-        if (filteredOrders != null) {
-            return filteredOrders.size();
+        if (orders != null) {
+            return orders.size();
         }
         return 0;
     }

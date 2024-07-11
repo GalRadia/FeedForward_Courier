@@ -1,17 +1,20 @@
 package com.example.feedforward_courier.models.server.user;
 
 
+import com.example.feedforward_courier.models.Courier;
+
 public class UserSession {
     private static UserSession instance;
-    private String boundaryId;
-    private String userEmail;
-    private final String SUPERAPP= "2024b.gal.said";
+    private Courier courier;
+    private UserBoundary user;
+    private final String SUPERAPP = "2024b.gal.said";
 
     public String getSUPERAPP() {
         return SUPERAPP;
     }
 
-    private UserSession() {}
+    private UserSession() {
+    }
 
     public static synchronized UserSession getInstance() {
         if (instance == null) {
@@ -20,24 +23,25 @@ public class UserSession {
         return instance;
     }
 
-    public void setBoundaryId(String boundaryId) {
-        this.boundaryId = boundaryId;
+    public static void setInstance(UserSession instance) {
+        UserSession.instance = instance;
     }
 
-    public String getBoundaryId() {
-        return boundaryId;
+    public Courier getCourier() {
+        return courier;
     }
 
-    public void setUserEmail(String userEmail) {
-        this.userEmail = userEmail;
+    public UserSession setCourier(Courier courier) {
+        this.courier = courier;
+        return this;
     }
 
-    public String getUserEmail() {
-        return userEmail;
+    public UserBoundary getUser() {
+        return user;
     }
 
-    public void clearSession() {
-        this.boundaryId = null;
-        this.userEmail = null;
+    public UserSession setUser(UserBoundary user) {
+        this.user = user;
+        return this;
     }
 }

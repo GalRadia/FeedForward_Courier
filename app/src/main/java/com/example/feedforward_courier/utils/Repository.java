@@ -160,11 +160,11 @@ public class Repository {
         );
         commandBoundary.setCommandAttributes(commandMap);
         Call<List<ObjectBoundary>> call = apiService.command(UserSession.getInstance().getSUPERAPP(), commandBoundary);
-        getUser(UserSession.getInstance().getUserEmail(), new ApiCallback<UserBoundary>() {
+        getUser(UserSession.getInstance().getUser().getUserId().getEmail(), new ApiCallback<UserBoundary>() {
             @Override
             public void onSuccess(UserBoundary user) {
                 user.setRole(RoleEnum.MINIAPP_USER);
-                updateUser(UserSession.getInstance().getSUPERAPP(), UserSession.getInstance().getUserEmail(), user, new ApiCallback<Void>() {
+                updateUser(UserSession.getInstance().getSUPERAPP(), UserSession.getInstance().getUser().getUserId().getEmail(), user, new ApiCallback<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
                         call.enqueue(new Callback<List<ObjectBoundary>>() {
@@ -172,7 +172,7 @@ public class Repository {
                             public void onResponse(Call<List<ObjectBoundary>> call, Response<List<ObjectBoundary>> response) {
                                 if (response.isSuccessful()) {
                                     user.setRole(RoleEnum.SUPERAPP_USER);
-                                    updateUser(UserSession.getInstance().getSUPERAPP(), UserSession.getInstance().getUserEmail(), user, new ApiCallback<Void>() {
+                                    updateUser(UserSession.getInstance().getSUPERAPP(), UserSession.getInstance().getUser().getUserId().getEmail(), user, new ApiCallback<Void>() {
                                         @Override
                                         public void onSuccess(Void unused) {
                                             callback.onSuccess(response.body());
@@ -216,7 +216,7 @@ public class Repository {
     }
 
     public void updateObject(ObjectBoundary object, ApiCallback<Void> callback) {
-        Call<Void> call = apiService.updateObject(object.getObjectId().getId(), object.getObjectId().getSuperapp(), UserSession.getInstance().getSUPERAPP(), UserSession.getInstance().getUserEmail(), object);
+        Call<Void> call = apiService.updateObject(object.getObjectId().getId(), UserSession.getInstance().getSUPERAPP(), UserSession.getInstance().getSUPERAPP(), UserSession.getInstance().getUser().getUserId().getEmail(), object);
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {

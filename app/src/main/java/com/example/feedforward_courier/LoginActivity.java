@@ -150,8 +150,8 @@ public class LoginActivity extends AppCompatActivity {
                     public void onSuccess(ObjectBoundary objectBoundary) {
                         if ("Courier".equals(objectBoundary.getType())) {
                             Toast.makeText(LoginActivity.this, "User logged in successfully", Toast.LENGTH_SHORT).show();
-                            UserSession.getInstance().setBoundaryId(userBoundary.getUserName());
-                            UserSession.getInstance().setUserEmail(email);
+                            UserSession.getInstance().setUser(userBoundary);
+                            UserSession.getInstance().setCourier(new Courier(objectBoundary));
                             navigateToMainActivity();
                         } else {
                             Toast.makeText(LoginActivity.this, "User is not a courier owner", Toast.LENGTH_SHORT).show();
@@ -189,7 +189,7 @@ public class LoginActivity extends AppCompatActivity {
                 courier.setCourierPhone(phone);
                 courier.setStatus(StatusOfCourier.AVIALABLE); // Assuming you have a status field
 
-                ObjectBoundary objectBoundary = courier.toObjectBoundary(email);
+                ObjectBoundary objectBoundary = courier.toObjectBoundary();
 
                 apiRepository.createObject(objectBoundary, new ApiCallback<ObjectBoundary>() {
                     @Override
@@ -201,8 +201,8 @@ public class LoginActivity extends AppCompatActivity {
                         apiRepository.updateUser(UserSession.getInstance().getSUPERAPP(),email, updatedUser, new ApiCallback<Void>() {
                             @Override
                             public void onSuccess(Void unused) {
-                                UserSession.getInstance().setBoundaryId(updatedUser.getUserName());
-                                UserSession.getInstance().setUserEmail(email);
+                                UserSession.getInstance().setUser(userResult);
+                                UserSession.getInstance().setCourier(new Courier(result));
                                 navigateToMainActivity();
                             }
 

@@ -110,10 +110,12 @@
             android:layout_height="43dp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
+            android:layout_marginEnd="16dp"
             android:text="Finish"
-            tools:ignore="MissingConstraints"
-            tools:layout_editor_absoluteX="180dp"
-            tools:layout_editor_absoluteY="109dp" />
+            app:layout_constraintBottom_toBottomOf="@+id/BTN_Order_Start"
+            app:layout_constraintEnd_toStartOf="@+id/BTN_Order_Start"
+            app:layout_constraintTop_toTopOf="@+id/BTN_Order_Start"
+            tools:ignore="MissingConstraints" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/BTN_Order_Start"

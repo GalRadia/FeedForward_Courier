@@ -56,14 +56,16 @@ public class ActiveOrdersAdapter extends RecyclerView.Adapter<ActiveOrdersAdapte
         holder.foodItems.setText(items);
         holder.donationDate.setText(order.getOrderDate());
         holder.donationTime.setText(order.getOrderTime());
-
+        holder.finishButton.setOnClickListener(v -> {
+            order.setOrderStatus(OrderStatus.DELIVERED);
+            activeOrderCallback.onFinishOrder(order);
+            holder.finishButton.setVisibility(View.GONE);
+            notifyDataSetChanged();
+            notifyItemRemoved(position);
+        });
         if (order.getOrderStatus() == OrderStatus.ACTIVE) {
             holder.finishButton.setVisibility(View.VISIBLE);
-            holder.finishButton.setOnClickListener(v -> {
-                order.setOrderStatus(OrderStatus.DELIVERED);
-                activeOrderCallback.onFinishOrder(order);
-                holder.finishButton.setVisibility(View.GONE);
-            });
+
         } else {
             holder.finishButton.setVisibility(View.GONE);
         }

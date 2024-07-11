@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.feedforward_courier.interfacea.ApiCallback;
+import com.example.feedforward_courier.models.Courier;
 import com.example.feedforward_courier.models.Order;
 import com.example.feedforward_courier.models.OrderStatus;
 import com.example.feedforward_courier.models.server.DistanceUnit;
@@ -14,6 +15,7 @@ import com.example.feedforward_courier.models.server.object.ObjectBoundary;
 import com.example.feedforward_courier.models.server.user.UserSession;
 import com.example.feedforward_courier.utils.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HomeViewModel extends ViewModel {
@@ -31,22 +33,6 @@ public class HomeViewModel extends ViewModel {
 
     }
 
-    public void getOrders(ApiCallback<List<Order>> callback){
-        repository.getAllOrders(UserSession.getInstance().getSUPERAPP(), UserSession.getInstance().getUserEmail(), 50, 0, new ApiCallback<List<ObjectBoundary>>() {
-            @Override
-            public void onSuccess(List<ObjectBoundary> result) {
-                List<Order> orders = Order.convertObjectBoundaryList(result);
-                callback.onSuccess(orders);
-            }
-
-            @Override
-            public void onError(String error) {
-                Log.e("HomeViewModel", "getOrders: " + error);
-            }
-        });
-
-    }
-
 
     public void updateOrder(Order order, ApiCallback<Void> callback) {
         ObjectBoundary objectBoundary = order.convert(order, order.getDonatorEmail());
@@ -57,17 +43,19 @@ public class HomeViewModel extends ViewModel {
         currentLocation.setValue(location);
 
     }
+
     public void getPendingOrdersByLocation(double distance, ApiCallback<List<Order>> callback) {
         repository.getAllOrdersByCommandAndLocation(DistanceUnit.KILOMETERS, currentLocation.getValue(), distance, new ApiCallback<List<ObjectBoundary>>() {
             @Override
             public void onSuccess(List<ObjectBoundary> result) {
                 List<Order> orders = Order.convertObjectBoundaryList(result);
-                for (int i = 0; i < orders.size(); i++) {
-                    if (orders.get(i).getOrderStatus() != OrderStatus.PENDING) {
-                        orders.remove(i);
-                    }
+                List<Order> filteredOrders = new ArrayList<>();
+                for (Order order :
+                        orders) {
+                    if (order.getOrderStatus() == OrderStatus.PENDING)
+                        filteredOrders.add(order);
                 }
-                callback.onSuccess(orders);
+                callback.onSuccess(filteredOrders);
             }
 
             @Override
@@ -75,5 +63,9 @@ public class HomeViewModel extends ViewModel {
                 callback.onError(error);
             }
         });
+    }
+
+    public void updateCourier(Courier courier, ApiCallback<Void> callback) {
+        repository.updateObject(courier.toObjectBoundary(), callback);
     }
 }

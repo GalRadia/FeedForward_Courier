@@ -3,17 +3,19 @@ package com.example.feedforward_courier.models;
 import com.example.feedforward_courier.models.server.command.UserId;
 import com.example.feedforward_courier.models.server.object.CreatedBy;
 import com.example.feedforward_courier.models.server.object.ObjectBoundary;
+import com.example.feedforward_courier.models.server.object.ObjectId;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Map;
 
 public class Courier {
+    private ObjectId courierID;
     private String courierName;
     private String courierPhone;
     private String courierEmail;
     private StatusOfCourier status;
-    private ArrayList<String> allOrders;
+    private ArrayList<String> allOrders = new ArrayList<>();
 
     public Courier() {
     }
@@ -26,8 +28,17 @@ public class Courier {
         this.courierEmail = temp.getCourierEmail();
         this.status = temp.getStatus();
         this.allOrders = temp.getAllOrders();
+        this.courierID = objectBoundary.getObjectId();
     }
 
+    public ObjectId getCourierID() {
+        return courierID;
+    }
+
+    public Courier setCourierID(ObjectId courierID) {
+        this.courierID = courierID;
+        return this;
+    }
 
     public ArrayList<String> getAllOrders() {
         return allOrders;
@@ -76,19 +87,20 @@ public class Courier {
     }
 
 
-    public ObjectBoundary toObjectBoundary(String email) {
+    public ObjectBoundary toObjectBoundary() {
         ObjectBoundary objectBoundary = new ObjectBoundary();
         objectBoundary.setType("Courier");
         objectBoundary.setAlias(this.courierName);
-
+        objectBoundary.setObjectId(getCourierID());
         objectBoundary.setActive(true);
 
         CreatedBy createdBy = new CreatedBy();
         UserId userId = new UserId();
         userId.setSuperapp("2024b.gal.said");
-        userId.setEmail(email);
+        userId.setEmail(this.courierEmail);
         createdBy.setUserId(userId);
         objectBoundary.setCreatedBy(createdBy);
+
 
         Gson gson = new Gson();
         Map<String, Object> objectDetails = Map.of("Courier", gson.toJson(this, Courier.class));
