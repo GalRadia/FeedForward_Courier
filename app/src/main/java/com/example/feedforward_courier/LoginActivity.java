@@ -48,7 +48,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void showSignInDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Sign In");
+        builder.setTitle(getString(R.string.sign_in));
 
         final EditText inputEmail = new EditText(this);
         inputEmail.setHint("Email");
@@ -56,9 +56,9 @@ public class LoginActivity extends AppCompatActivity {
 
         builder.setView(inputEmail);
 
-        builder.setPositiveButton("Sign In", null);
+        builder.setPositiveButton(getString(R.string.sign_in), null);
 
-        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
+        builder.setNegativeButton(getString(R.string.cancel), (dialog, which) -> dialog.dismiss());
 
         AlertDialog dialog = builder.create();
 
@@ -68,7 +68,7 @@ public class LoginActivity extends AppCompatActivity {
                 String email = inputEmail.getText().toString().trim();
                 if (TextUtils.isEmpty(email) || !isValidEmail(email)) {
                     setErrorDrawable(inputEmail);
-                    Toast.makeText(LoginActivity.this, "Please enter a valid email", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, getString(R.string.please_enter_a_valid_email), Toast.LENGTH_SHORT).show();
                 } else {
                     clearErrorDrawable(inputEmail);
                     dialog.dismiss();
@@ -104,21 +104,21 @@ public class LoginActivity extends AppCompatActivity {
 
             if (TextUtils.isEmpty(email) || !isValidEmail(email)) {
                 setErrorDrawable(inputEmail);
-                Toast.makeText(LoginActivity.this, "Please enter a valid email", Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, getString(R.string.please_enter_a_valid_email), Toast.LENGTH_SHORT).show();
                 isValid = false;
             } else {
                 clearErrorDrawable(inputEmail);
             }
             if (TextUtils.isEmpty(name)) {
                 setErrorDrawable(inputName);
-                Toast.makeText(LoginActivity.this, "Name cannot be empty", Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, getString(R.string.name_cannot_be_empty), Toast.LENGTH_SHORT).show();
                 isValid = false;
             } else {
                 clearErrorDrawable(inputName);
             }
             if (TextUtils.isEmpty(phone)) {
                 setErrorDrawable(inputPhone);
-                Toast.makeText(LoginActivity.this, "Phone cannot be empty", Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, getString(R.string.phone_cannot_be_empty), Toast.LENGTH_SHORT).show();
                 isValid = false;
             } else {
                 clearErrorDrawable(inputPhone);
@@ -144,30 +144,29 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onSuccess(UserBoundary userBoundary) {
                 String objectId = userBoundary.getUserName();
-
                 apiRepository.getSpecificObject("2024b.gal.said", objectId, "2024b.gal.said", email, new ApiCallback<ObjectBoundary>() {
                     @Override
                     public void onSuccess(ObjectBoundary objectBoundary) {
                         if ("Courier".equals(objectBoundary.getType())) {
-                            Toast.makeText(LoginActivity.this, "User logged in successfully", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginActivity.this, getString(R.string.user_logged_in_successfully), Toast.LENGTH_SHORT).show();
                             UserSession.getInstance().setUser(userBoundary);
                             UserSession.getInstance().setCourier(new Courier(objectBoundary));
                             navigateToMainActivity();
                         } else {
-                            Toast.makeText(LoginActivity.this, "User is not a courier owner", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginActivity.this, getString(R.string.user_is_not_a_courier_owner), Toast.LENGTH_SHORT).show();
                         }
                     }
 
                     @Override
                     public void onError(String error) {
-                        Toast.makeText(LoginActivity.this, "Failed to verify user role: " + error, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivity.this, getString(R.string.failed_to_verify_user_role) + error, Toast.LENGTH_SHORT).show();
                     }
                 });
             }
 
             @Override
             public void onError(String error) {
-                Toast.makeText(LoginActivity.this, "Failed to login: " + error, Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, getString(R.string.failed_to_login) + error, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -182,7 +181,7 @@ public class LoginActivity extends AppCompatActivity {
         apiRepository.createUser(newUserBoundary, new ApiCallback<UserBoundary>() {
             @Override
             public void onSuccess(UserBoundary userResult) {
-                Toast.makeText(LoginActivity.this, "User created successfully", Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, getString(R.string.user_created_successfully), Toast.LENGTH_SHORT).show();
                 Courier courier = new Courier();
                 courier.setCourierEmail(email);
                 courier.setCourierName(name);
@@ -194,7 +193,7 @@ public class LoginActivity extends AppCompatActivity {
                 apiRepository.createObject(objectBoundary, new ApiCallback<ObjectBoundary>() {
                     @Override
                     public void onSuccess(ObjectBoundary result) {
-                        Toast.makeText(LoginActivity.this, "Courier created successfully", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivity.this,getString(R.string.courier_created_successfully), Toast.LENGTH_SHORT).show();
                         UserBoundary updatedUser = userResult;
                         updatedUser.setUserName(result.getObjectId().getId());
                         updatedUser.setRole(RoleEnum.MINIAPP_USER);
@@ -208,21 +207,21 @@ public class LoginActivity extends AppCompatActivity {
 
                             @Override
                             public void onError(String error) {
-                                Toast.makeText(LoginActivity.this, "Failed to update user: " + error, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(LoginActivity.this, getString(R.string.failed_to_update_user) + error, Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
 
                     @Override
                     public void onError(String error) {
-                        Toast.makeText(LoginActivity.this, "Failed to create courier: " + error, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivity.this, getString(R.string.failed_to_create_courier) + error, Toast.LENGTH_SHORT).show();
                     }
                 });
             }
 
             @Override
             public void onError(String error) {
-                Toast.makeText(LoginActivity.this, "Failed to create user: " + error, Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, getString(R.string.failed_to_create_user) + error, Toast.LENGTH_SHORT).show();
             }
         });
     }

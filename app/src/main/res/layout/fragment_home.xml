@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:text="Orders"
+        android:text="@string/orders"
         android:textAlignment="center"
         android:textSize="32sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -49,21 +49,21 @@
             style="?attr/materialButtonOutlinedStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="5KM" />
+            android:text="@string/_5km" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/KM15_BTN"
             style="?attr/materialButtonOutlinedStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="15KM" />
+            android:text="@string/_15km" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/KM30_BTN"
             style="?attr/materialButtonOutlinedStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="30KM" />
+            android:text="@string/_30km" />
 
     </com.google.android.material.button.MaterialButtonToggleGroup>
 

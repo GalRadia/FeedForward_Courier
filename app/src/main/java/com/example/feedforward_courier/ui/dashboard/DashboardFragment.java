@@ -108,13 +108,13 @@ public class DashboardFragment extends Fragment {
                 dashboardViewModel.updateOrderStatus(order, new ApiCallback<Void>() {
                     @Override
                     public void onSuccess(Void result) {
-                        Toast.makeText(getContext(),"order updated",Toast.LENGTH_LONG);
+                        Toast.makeText(getContext(), getString(R.string.order_updated),Toast.LENGTH_LONG);
                         filterOrdersByStatus();
                     }
 
                     @Override
                     public void onError(String error) {
-                        Toast.makeText(getContext(),"order couldnt be updated",Toast.LENGTH_LONG);
+                        Toast.makeText(getContext(), getString(R.string.order_couldnt_be_updated),Toast.LENGTH_LONG);
 
                     }
                 });

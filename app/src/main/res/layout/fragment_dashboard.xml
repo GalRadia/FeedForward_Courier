@@ -13,7 +13,7 @@
         android:layout_margin="16dp"
         android:layout_marginTop="24dp"
         android:gravity="center"
-        android:text="All Deliveries"
+        android:text="@string/all_deliveries"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -38,7 +38,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0"
-            android:text="Ongoing"
+            android:text="@string/ongoing"
             android:textAllCaps="false"
         />
 
@@ -48,7 +48,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0"
-            android:text="Finished"
+            android:text="@string/finished"
             android:textAllCaps="false" />
 
     </com.google.android.material.button.MaterialButtonToggleGroup>

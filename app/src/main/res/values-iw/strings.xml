@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">FeedForward_Courier</string>
+    <string name="title_home">בית</string>
+    <string name="title_dashboard">לוח מחוונים</string>
+    <string name="title_notifications">התראות</string>
+    <string name="sign_up">הרשמה</string>
+    <string name="sign_in">התחברות</string>
+    <string name="email">אימייל</string>
+    <string name="name">שם</string>
+    <string name="phone">טלפון</string>
+    <string name="cancel">ביטול</string>
+    <string name="ongoing">מתמשך</string>
+    <string name="all_deliveries">כל המשלוחים</string>
+    <string name="finished">הסתיים</string>
+    <string name="orders">הזמנות</string>
+    <string name="_5km">5 ק"מ</string>
+    <string name="_15km">15 ק"מ</string>
+    <string name="_30km">30 ק"מ</string>
+    <string name="date">תאריך</string>
+    <string name="time">זמן</string>
+    <string name="restaurant_name">שם המסעדה</string>
+    <string name="restaurant_location">מיקום המסעדה</string>
+    <string name="association_name">שם האיגוד</string>
+    <string name="association_location">מיקום האיגוד</string>
+    <string name="order_details">פרטי ההזמנה</string>
+    <string name="start">התחלה</string>
+    <string name="please_enter_a_valid_email">נא להזין אימייל תקין</string>
+    <string name="name_cannot_be_empty">השם לא יכול להיות ריק</string>
+    <string name="phone_cannot_be_empty">הטלפון לא יכול להיות ריק</string>
+    <string name="user_logged_in_successfully">המשתמש נכנס בהצלחה</string>
+    <string name="user_is_not_a_courier_owner">המשתמש אינו בעל שליח</string>
+    <string name="failed_to_verify_user_role">נכשל באימות תפקיד המשתמש: </string>
+    <string name="failed_to_login">נכשל בהתחברות: </string>
+    <string name="user_created_successfully">המשתמש נוצר בהצלחה</string>
+    <string name="courier_created_successfully">השליח נוצר בהצלחה</string>
+    <string name="failed_to_update_user">נכשל בעדכון המשתמש: </string>
+    <string name="failed_to_create_courier">נכשל ביצירת השליח: </string>
+    <string name="failed_to_create_user">נכשל ביצירת המשתמש: </string>
+    <string name="order_updated">ההזמנה עודכנה</string>
+    <string name="order_couldnt_be_updated">ההזמנה לא יכולה הייתה להתעדכן</string>
+    <string name="there_is_location">יש מיקום!!</string>
+    <string name="error">שגיאה</string>
+</resources>

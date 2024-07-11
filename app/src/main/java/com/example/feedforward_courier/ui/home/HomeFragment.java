@@ -19,6 +19,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.feedforward_courier.R;
 import com.example.feedforward_courier.adapters.OrdersAdapter;
 import com.example.feedforward_courier.databinding.FragmentHomeBinding;
 import com.example.feedforward_courier.interfacea.ApiCallback;
@@ -99,7 +100,7 @@ public class HomeFragment extends Fragment {
                 @Override
                 public void onSuccess(Void result) {
                     // Handle success
-                    Toast.makeText(getContext(),"Order Updated",Toast.LENGTH_LONG);
+                    Toast.makeText(getContext(),getString(R.string.order_updated),Toast.LENGTH_LONG);
                     Courier courier = UserSession.getInstance().getCourier();
                     courier.getAllOrders().add(order.getOrderID().getId());
                     homeViewModel.updateCourier(courier, new ApiCallback<Void>() {
@@ -142,13 +143,13 @@ public class HomeFragment extends Fragment {
             homeViewModel.getPendingOrdersByLocation(distance, new ApiCallback<List<Order>>() {
                 @Override
                 public void onSuccess(List<Order> orders) {
-                    Toast.makeText(getContext(),"THERE IS LOCATION!!", Toast.LENGTH_LONG);
+                    Toast.makeText(getContext(),getString( R.string.there_is_location), Toast.LENGTH_LONG);
                     adapter.setDonations(orders);
                 }
 
                 @Override
                 public void onError(String error) {
-                    Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getString(R.string.error), Toast.LENGTH_SHORT).show();
                     Log.d("HomeFragment", "onError: " + error);
                 }
             });
