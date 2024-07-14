@@ -13,7 +13,7 @@ public class UserBoundary {
     }
 
     public UserBoundary(String email, String username,RoleEnum role ,String avatar) {
-        UserId userId = new UserId("2024b.gal.said", email);
+        UserId userId = new UserId(UserSession.getInstance().getSUPERAPP(), email);
         this.userId = userId;
         this.role = role;
         this.username = username;

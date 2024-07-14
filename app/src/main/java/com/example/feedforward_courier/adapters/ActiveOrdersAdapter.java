@@ -44,7 +44,6 @@ public class ActiveOrdersAdapter extends RecyclerView.Adapter<ActiveOrdersAdapte
     @Override
     public void onBindViewHolder(@NonNull ActiveOrdersViewHolder holder, int position) {
         Order order = orderList.get(position);
-        holder.restaurantName.setText(order.getDonatorName());
         holder.restaurantLocation.setText(order.getDonatorAddress());
         holder.associationLocation.setText(order.getAssociationAddress());
         StringBuilder items = new StringBuilder();

@@ -144,7 +144,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onSuccess(UserBoundary userBoundary) {
                 String objectId = userBoundary.getUserName();
-                apiRepository.getSpecificObject("2024b.gal.said", objectId, "2024b.gal.said", email, new ApiCallback<ObjectBoundary>() {
+                apiRepository.getSpecificObject(UserSession.getInstance().getSUPERAPP(), objectId, UserSession.getInstance().getSUPERAPP(), email, new ApiCallback<ObjectBoundary>() {
                     @Override
                     public void onSuccess(ObjectBoundary objectBoundary) {
                         if ("Courier".equals(objectBoundary.getType())) {

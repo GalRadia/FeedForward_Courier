@@ -4,6 +4,7 @@ import com.example.feedforward_courier.models.server.command.UserId;
 import com.example.feedforward_courier.models.server.object.CreatedBy;
 import com.example.feedforward_courier.models.server.object.ObjectBoundary;
 import com.example.feedforward_courier.models.server.object.ObjectId;
+import com.example.feedforward_courier.models.server.user.UserSession;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -96,7 +97,7 @@ public class Courier {
 
         CreatedBy createdBy = new CreatedBy();
         UserId userId = new UserId();
-        userId.setSuperapp("2024b.gal.said");
+        userId.setSuperapp(UserSession.getInstance().getSUPERAPP());
         userId.setEmail(this.courierEmail);
         createdBy.setUserId(userId);
         objectBoundary.setCreatedBy(createdBy);

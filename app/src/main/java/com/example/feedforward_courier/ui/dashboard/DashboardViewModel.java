@@ -27,7 +27,7 @@ public class DashboardViewModel extends ViewModel {
         List<Order> orders = new ArrayList<>();
 
         for (String orderId : orderIds) {
-            repository.getSpecificObject("2024b.gal.said", orderId, UserSession.getInstance().getSUPERAPP(), UserSession.getInstance().getUser().getUserId().getEmail(), new ApiCallback<ObjectBoundary>() {
+            repository.getSpecificObject(UserSession.getInstance().getSUPERAPP(), orderId, UserSession.getInstance().getSUPERAPP(), UserSession.getInstance().getUser().getUserId().getEmail(), new ApiCallback<ObjectBoundary>() {
                 @Override
                 public void onSuccess(ObjectBoundary orderObjectBoundary) {
                     Order order = new Order(orderObjectBoundary);

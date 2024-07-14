@@ -1,5 +1,7 @@
 package com.example.feedforward_courier.models.server.object;
 
+import com.example.feedforward_courier.models.server.user.UserSession;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +21,7 @@ public  class ObjectBoundary {
 
     public ObjectBoundary(String type, String alias, CreatedBy createdBy, Location location,
                           boolean active) {
-        this.objectId = new ObjectId("2024b.gal.said", "1234");
+        this.objectId = new ObjectId(UserSession.getInstance().getSUPERAPP(), "1234");
         this.setType(type);
         this.setAlias(alias);
         this.setCreatedBy(createdBy);
