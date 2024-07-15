@@ -1,33 +1,20 @@
 package com.example.feedforward_courier.models;
 
-import java.util.Objects;
-
 public class Food {
+
     private String name;
-    private String description;
-    private int quantity;
+    private int amount;
+    private String type;
+    private String expiryDate;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Food food = (Food) o;
-        return Objects.equals(name, food.name);
+    public Food() {
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(name);
-    }
-
-    public Food(){
-
-    }
-
-    public Food(String name, String description, int quantity) {
+    public Food(String name, int amount, String expiryDate, String type) {
         this.name = name;
-        this.description = description;
-        this.quantity = quantity;
+        this.amount = amount;
+        this.expiryDate = expiryDate;
+        this.type = type;
     }
 
     public String getName() {
@@ -39,27 +26,30 @@ public class Food {
         return this;
     }
 
-    public String getDescription() {
-        return description;
+    public int getAmount() {
+        return amount;
     }
 
-    public Food setDescription(String description) {
-        this.description = description;
+    public Food setAmount(int amount) {
+        this.amount = amount;
         return this;
     }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
+    public String getType() {
+        return type;
     }
 
-    public int getQuantity() {
-        return quantity;
+    public Food setType(String type) {
+        this.type = type;
+        return this;
     }
 
+    public String getExpiryDate() {
+        return expiryDate;
+    }
 
-
-    @Override
-    public String toString() {
-        return name + " - " + description + " - " + quantity;
+    public Food setExpiryDate(String expiryDate) {
+        this.expiryDate = expiryDate;
+        return this;
     }
 }

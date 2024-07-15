@@ -43,17 +43,17 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
     }
 
 
-
     @Override
     public void onBindViewHolder(@NonNull OrderViewHolder holder, int position) {
         Order order = orders.get(position);
         holder.associationName.setText(order.getAssociationName());
         holder.restaurantName.setText(order.getDonatorName());
         holder.restaurantLocation.setText(order.getDonatorAddress());
+        holder.associationLocation.setText(order.getAssociationAddress());
 
         StringBuilder items = new StringBuilder();
         for (Food food : order.getFoods()) {
-            items.append(food.getName()).append(", ");
+            items.append(food.getName() + " x" + food.getAmount()).append("\n");
         }
         if (items.charAt(items.length() - 1) == ' ')
             items.deleteCharAt(items.length() - 2);
@@ -75,11 +75,6 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
     }
 
 
-
-
-
-
-
     @Override
     public int getItemCount() {
         if (orders != null) {
@@ -87,6 +82,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         }
         return 0;
     }
+
     public class OrderViewHolder extends RecyclerView.ViewHolder {
         MaterialTextView associationName;
         MaterialTextView associationLocation;
@@ -115,9 +111,6 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
 
         }
     }
-
-
-
 
 
 }

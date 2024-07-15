@@ -219,8 +219,8 @@ public class DashboardFragment extends Fragment {
         double currentLatitude = currentLocation.getLatitude();
         double currentLongitude = currentLocation.getLongitude();
 
-        String waypoint = String.format("%f,%f", order.getDonatorLocation().getLat(), order.getDonatorLocation().getLng());
-        String destination = String.format("%f,%f", order.getAssociationLocation().getLat(), order.getAssociationLocation().getLng());
+        String waypoint = String.format("%s", order.getDonatorAddress());
+        String destination = String.format("%s", order.getAssociationAddress());
         Log.d("DashboardFragment", "getLastLocationAndLaunchGoogleMaps: " + waypoint + " " + destination);
         Uri gmmIntentUri = Uri.parse("https://www.google.com/maps/dir/?api=1" +
                 "&origin=" + currentLatitude + "," + currentLongitude +
