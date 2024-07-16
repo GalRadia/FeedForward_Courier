@@ -36,6 +36,11 @@ The app allowes the user to update order status and make a route with google map
 ```bash
  ./gradlew build
  ```
+3. **Configure Retrofit**:
+    Change the BaseURL to the path of the server with yourIP.
+    for example ```http://10.0.2.2:8084/```
+   
+    ```10.0.2.2``` is the ip for the emulator in android studio.
 
 ## Application Flow
 1.  **Registration/Login**: Association begin by registering for an account using an email.
